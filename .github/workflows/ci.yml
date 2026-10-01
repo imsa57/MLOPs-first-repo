@@ -1,0 +1,51 @@
+# when ever changes happen in this repo then this workflow will executed.
+
+name: CI - Train and save the model
+
+# action on which workflow has to triggerc( here we want only workflow should trigger on main )
+
+on:
+    push:
+      branches: [ main ]
+    pull_request:
+      branches: [ main ]    
+
+jobs:
+  matrix-pip:
+    name: Train and Save the model #name could be anything
+    runs-on: ubuntu-latest # runner to run the wrokflow for here we are using github provided runner but we can use my own too.
+    strategy:
+        matrix:
+            python: [ 3.11, 3.12]
+    
+    steps:
+       - name: Checkout # cheking code base
+         uses: actions/checkout@v4   
+         
+       - name: Setup python # setting python
+         uses: actions/setup-python@v4 
+         with: 
+            python-version: ${{ matrix.python }}
+
+       - name: Upgrade pip 
+         run: python -m pip install --upgrade pip setuptools wheel
+
+       - name: Installing project dependencies
+         run : python -m pip install -r requirements.txt
+         
+       - name: Train the modle
+         run: |
+            python train.py
+            ls -la artifacts 
+
+       - name: Upload artifacts
+         uses: actions/upload-artifact@v4
+         with: 
+            name: ml-artifacts-${{ matrix.python }}-${{ github.run_id }}
+            path: artifacts
+
+
+
+
+
+
