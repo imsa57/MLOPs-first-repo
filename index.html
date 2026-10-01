@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h2>Test Flask Predict</h2>
+  <!-- <input type="text"> -->
+
+  <button onclick="sendRequest()">Send Request</button>
+  <pre id="output"></pre>
+
+  <script>
+    async function sendRequest() {
+      const response = await fetch("http://127.0.0.1:5001/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ features: [1,1,1,1] })
+      });
+      const data = await response.json();
+      document.getElementById("output").textContent = JSON.stringify(data, null, 2);
+    }
+  </script>
+</body>
+</html>
